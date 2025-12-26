@@ -1,0 +1,33 @@
+[project]
+name = "hireprism"
+version = "0.1.0"
+description = "Placement intelligence platform for compensation, roles, eligibility, and hiring-trend analytics"
+requires-python = ">=3.11"
+dependencies = [
+  "pandas",
+  "duckdb",
+  "pyarrow",
+  "streamlit",
+  "pydantic",
+  "pyyaml",
+  "jinja2",
+  "pytest",
+  "pytest-cov",
+  "black",
+  "ruff",
+  "pre-commit",
+  "python-dotenv",
+  "rapidfuzz",
+  "scipy"
+]
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
