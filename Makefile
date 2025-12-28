@@ -2,12 +2,13 @@ PYTHON=.venv/bin/python
 PIP=.venv/bin/pip
 STREAMLIT=.venv/bin/streamlit
 PYTEST=.venv/bin/pytest
+PROFILE_PYTHON=$(if $(wildcard .venv/Scripts/python.exe),.venv/Scripts/python.exe,.venv/bin/python)
 
 install:
 	$(PIP) install -e .
 
 profile:
-	$(PYTHON) -m src.ingestion.load_json
+	$(PROFILE_PYTHON) -m src.ingestion.load_json
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +

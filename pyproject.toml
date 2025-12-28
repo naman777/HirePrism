@@ -18,7 +18,8 @@ dependencies = [
   "pre-commit",
   "python-dotenv",
   "rapidfuzz",
-  "scipy"
+  "scipy",
+  "matplotlib"
 ]
 
 [tool.black]
