@@ -10,6 +10,9 @@ install:
 profile:
 	$(PROFILE_PYTHON) -m src.ingestion.load_json
 
+flatten:
+	$(PROFILE_PYTHON) -m src.ingestion.flatten_offers
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
