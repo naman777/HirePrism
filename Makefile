@@ -13,6 +13,9 @@ profile:
 flatten:
 	$(PROFILE_PYTHON) -m src.ingestion.flatten_offers
 
+clean_data:
+	$(PROFILE_PYTHON) -m src.cleaning.build_clean
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
