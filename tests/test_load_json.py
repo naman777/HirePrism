@@ -1,4 +1,5 @@
 import json
+import os
 import tempfile
 from pathlib import Path
 
@@ -8,25 +9,32 @@ from src.ingestion.load_json import RAW_PATH, load_placements, profile_placement
 
 
 def _write_payload(payload: dict) -> Path:
-    with tempfile.NamedTemporaryFile(
-        "w", suffix=".json", delete=False, dir=Path.cwd(), encoding="utf-8"
-    ) as file:
-        file.write(json.dumps(payload))
-        return Path(file.name)
+    fd, path = tempfile.mkstemp(suffix=".json")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(json.dumps(payload))
+    except Exception:
+        os.unlink(path)
+        raise
+    return Path(path)
 
 
 def test_load_placements_rejects_missing_top_level_key() -> None:
     raw_path = _write_payload({"records": []})
-
-    with pytest.raises(ValueError, match="top-level key 'placements'"):
-        load_placements(raw_path)
+    try:
+        with pytest.raises(ValueError, match="top-level key 'placements'"):
+            load_placements(raw_path)
+    finally:
+        raw_path.unlink(missing_ok=True)
 
 
 def test_load_placements_rejects_non_list_placements() -> None:
     raw_path = _write_payload({"placements": {}})
-
-    with pytest.raises(ValueError, match="'placements' to be a list"):
-        load_placements(raw_path)
+    try:
+        with pytest.raises(ValueError, match="'placements' to be a list"):
+            load_placements(raw_path)
+    finally:
+        raw_path.unlink(missing_ok=True)
 
 
 def test_load_placements_accepts_current_dataset() -> None:

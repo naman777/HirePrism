@@ -16,6 +16,9 @@ flatten:
 clean_data:
 	$(PROFILE_PYTHON) -m src.cleaning.build_clean
 
+quality:
+	$(PROFILE_PYTHON) -m src.quality.scorer
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete

@@ -1,0 +1,27 @@
+{
+  "run_timestamp": "2026-04-23T20:21:59",
+  "total_offers": 654,
+  "scores": {
+    "ctc_parseability": 0.8272,
+    "stipend_parseability": 0.6988,
+    "branch_coverage": 0.9924,
+    "role_standardization": 0.9602,
+    "date_validity": 1.0,
+    "cgpa_numeric_rate": 0.6697
+  },
+  "overall_score": 0.858,
+  "flagged_issues": [
+    {
+      "check": "stipend_parseability",
+      "score": 0.6988,
+      "severity": "LOW",
+      "message": "Only 69.9% of stipend values could be parsed \u2014 expected for FTE-only offers."
+    },
+    {
+      "check": "cgpa_numeric_rate",
+      "score": 0.6697,
+      "severity": "LOW",
+      "message": "Only 67.0% of offers have a numeric CGPA threshold \u2014 rest use 'No Criteria' or are unknown."
+    }
+  ]
+}

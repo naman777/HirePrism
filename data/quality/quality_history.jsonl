@@ -1,0 +1,1 @@
+{"run_timestamp": "2026-04-23T20:21:59", "total_offers": 654, "overall_score": 0.858, "scores": {"ctc_parseability": 0.8272, "stipend_parseability": 0.6988, "branch_coverage": 0.9924, "role_standardization": 0.9602, "date_validity": 1.0, "cgpa_numeric_rate": 0.6697}}
