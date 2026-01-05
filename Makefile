@@ -19,6 +19,9 @@ clean_data:
 quality:
 	$(PROFILE_PYTHON) -m src.quality.scorer
 
+db:
+	$(PROFILE_PYTHON) -m src.modeling.build_tables
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
