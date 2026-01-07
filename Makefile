@@ -22,6 +22,9 @@ quality:
 db:
 	$(PROFILE_PYTHON) -m src.modeling.build_tables
 
+metrics:
+	$(PROFILE_PYTHON) -m src.metrics.executor
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete

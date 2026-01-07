@@ -1,0 +1,102 @@
+metrics:
+
+  - name: branch_opportunity_count
+    label: "Offer Count by Branch"
+    description: "Number of distinct offers open to each branch code, excluding unknown/NA entries."
+    sql: |
+      SELECT * FROM vw_branch_summary
+      ORDER BY offer_count DESC
+    version: "1.0"
+    owner: "Naman"
+    tags: [branches]
+
+  - name: branch_group_distribution
+    label: "Offer Count by Branch Group"
+    description: "Aggregated opportunity count by broader branch group (CS, ECE, MECH, etc.)."
+    sql: |
+      SELECT
+          b.branch_group,
+          COUNT(DISTINCT b.offer_id)                  AS offer_count,
+          ROUND(AVG(f.ctc_lpa_normalized), 2)         AS avg_ctc_lpa,
+          COUNT(CASE WHEN f.offer_type_standardized = 'FTE' THEN 1 END)
+                                                      AS fte_count,
+          COUNT(CASE WHEN f.offer_type_standardized IN
+              ('INTERN', 'INTERN_FTE', 'INTERN_POSSIBLE_FTE') THEN 1 END)
+                                                      AS intern_count
+      FROM bridge_offer_branches b
+      JOIN fact_offers f ON b.offer_id = f.offer_id
+      WHERE b.branch_group NOT IN ('UNKNOWN', 'NA')
+        AND f.ctc_status IN ('KNOWN', 'RANGE')
+      GROUP BY b.branch_group
+      ORDER BY offer_count DESC
+    version: "1.0"
+    owner: "Naman"
+    tags: [branches]
+
+  - name: fte_vs_intern_by_branch
+    label: "FTE vs Intern Split by Branch"
+    description: "For each branch, the breakdown between full-time and internship offers."
+    sql: |
+      SELECT
+          b.branch_standardized,
+          b.branch_group,
+          COUNT(DISTINCT b.offer_id)                  AS total_offers,
+          COUNT(CASE WHEN f.offer_type_standardized = 'FTE' THEN 1 END)
+                                                      AS fte_count,
+          COUNT(CASE WHEN f.offer_type_standardized IN
+              ('INTERN', 'INTERN_FTE', 'INTERN_POSSIBLE_FTE') THEN 1 END)
+                                                      AS intern_count,
+          COUNT(CASE WHEN f.offer_type_standardized = 'PPO' THEN 1 END)
+                                                      AS ppo_count,
+          ROUND(
+              COUNT(CASE WHEN f.offer_type_standardized = 'FTE' THEN 1 END)
+              * 100.0 / COUNT(DISTINCT b.offer_id), 1
+          )                                           AS fte_pct
+      FROM bridge_offer_branches b
+      JOIN fact_offers f ON b.offer_id = f.offer_id
+      WHERE b.branch_standardized NOT IN ('UNKNOWN', 'NOT_APPLICABLE')
+      GROUP BY b.branch_standardized, b.branch_group
+      ORDER BY total_offers DESC
+    version: "1.0"
+    owner: "Naman"
+    tags: [branches, internship]
+
+  - name: branch_avg_ctc
+    label: "Average CTC by Branch (Known Only)"
+    description: "Mean LPA per branch for offers with a parseable CTC value."
+    sql: |
+      SELECT
+          b.branch_standardized,
+          b.branch_group,
+          COUNT(DISTINCT b.offer_id)                  AS offer_count,
+          ROUND(AVG(f.ctc_lpa_normalized), 2)         AS avg_ctc_lpa,
+          ROUND(MAX(f.ctc_lpa_normalized), 2)         AS max_ctc_lpa
+      FROM bridge_offer_branches b
+      JOIN fact_offers f ON b.offer_id = f.offer_id
+      WHERE f.ctc_status IN ('KNOWN', 'RANGE')
+        AND b.branch_standardized NOT IN ('UNKNOWN', 'NOT_APPLICABLE')
+      GROUP BY b.branch_standardized, b.branch_group
+      ORDER BY avg_ctc_lpa DESC NULLS LAST
+    version: "1.0"
+    owner: "Naman"
+    tags: [branches, compensation]
+
+  - name: top_companies_by_branch
+    label: "Top Companies Open to CS Branches"
+    description: "Companies recruiting CS-group branches (COPC, COE, COBS) with the highest CTC."
+    sql: |
+      SELECT
+          f.company_name,
+          ROUND(AVG(f.ctc_lpa_normalized), 2)         AS avg_ctc_lpa,
+          COUNT(DISTINCT f.offer_id)                  AS offer_count,
+          LIST(DISTINCT b.branch_standardized)        AS branches
+      FROM fact_offers f
+      JOIN bridge_offer_branches b ON f.offer_id = b.offer_id
+      WHERE b.branch_group = 'CS'
+        AND f.ctc_status IN ('KNOWN', 'RANGE')
+      GROUP BY f.company_name
+      ORDER BY avg_ctc_lpa DESC NULLS LAST
+      LIMIT 15
+    version: "1.0"
+    owner: "Naman"
+    tags: [branches, compensation, company]

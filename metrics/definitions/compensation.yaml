@@ -1,0 +1,129 @@
+metrics:
+
+  - name: avg_ctc_by_job_family
+    label: "Average CTC by Job Family"
+    description: "Mean normalized CTC (LPA) per job family, for offers where CTC is known or a range."
+    sql: |
+      SELECT
+          job_family,
+          COUNT(*)                                    AS offer_count,
+          ROUND(AVG(ctc_lpa_normalized), 2)           AS avg_ctc_lpa,
+          ROUND(MIN(ctc_lpa_normalized), 2)           AS min_ctc_lpa,
+          ROUND(MAX(ctc_lpa_normalized), 2)           AS max_ctc_lpa,
+          ROUND(STDDEV(ctc_lpa_normalized), 2)        AS stddev_ctc_lpa
+      FROM fact_offers
+      WHERE ctc_status IN ('KNOWN', 'RANGE')
+      GROUP BY job_family
+      ORDER BY avg_ctc_lpa DESC NULLS LAST
+    version: "1.0"
+    owner: "Naman"
+    tags: [compensation, role]
+
+  - name: avg_ctc_by_branch
+    label: "Average CTC by Branch"
+    description: "Mean normalized CTC (LPA) per branch code, joining through the bridge table."
+    sql: |
+      SELECT
+          b.branch_standardized,
+          b.branch_group,
+          COUNT(DISTINCT b.offer_id)                  AS offer_count,
+          ROUND(AVG(f.ctc_lpa_normalized), 2)         AS avg_ctc_lpa,
+          ROUND(MIN(f.ctc_lpa_normalized), 2)         AS min_ctc_lpa,
+          ROUND(MAX(f.ctc_lpa_normalized), 2)         AS max_ctc_lpa
+      FROM bridge_offer_branches b
+      JOIN fact_offers f ON b.offer_id = f.offer_id
+      WHERE f.ctc_status IN ('KNOWN', 'RANGE')
+        AND b.branch_standardized NOT IN ('UNKNOWN', 'NOT_APPLICABLE')
+      GROUP BY b.branch_standardized, b.branch_group
+      ORDER BY avg_ctc_lpa DESC NULLS LAST
+    version: "1.0"
+    owner: "Naman"
+    tags: [compensation, branch]
+
+  - name: high_package_rate
+    label: "High Package Rate"
+    description: "Percentage of known-CTC offers that are 10 LPA or above."
+    sql: |
+      SELECT
+          ROUND(
+              COUNT(CASE WHEN ctc_lpa_normalized >= 10 THEN 1 END) * 100.0
+              / COUNT(*), 1
+          )                                           AS high_package_pct,
+          COUNT(CASE WHEN ctc_lpa_normalized >= 10 THEN 1 END)
+                                                      AS high_package_count,
+          COUNT(*)                                    AS total_known_ctc
+      FROM fact_offers
+      WHERE ctc_status IN ('KNOWN', 'RANGE')
+    version: "1.0"
+    owner: "Naman"
+    tags: [compensation, kpi]
+
+  - name: ctc_status_breakdown
+    label: "CTC Status Breakdown"
+    description: "Distribution of CTC parsing status across all offers."
+    sql: |
+      SELECT
+          ctc_status,
+          COUNT(*)                                    AS offer_count,
+          ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1)
+                                                      AS pct_of_total
+      FROM fact_offers
+      GROUP BY ctc_status
+      ORDER BY offer_count DESC
+    version: "1.0"
+    owner: "Naman"
+    tags: [compensation, quality]
+
+  - name: stipend_by_offer_type
+    label: "Average Stipend by Offer Type"
+    description: "Mean monthly stipend (INR) per standardized offer type, for offers with known stipend."
+    sql: |
+      SELECT
+          offer_type_standardized,
+          COUNT(*)                                    AS offer_count,
+          ROUND(AVG(stipend_monthly_normalized), 0)   AS avg_stipend_monthly,
+          ROUND(MIN(stipend_monthly_normalized), 0)   AS min_stipend_monthly,
+          ROUND(MAX(stipend_monthly_normalized), 0)   AS max_stipend_monthly
+      FROM fact_offers
+      WHERE stipend_status IN ('KNOWN', 'RANGE')
+      GROUP BY offer_type_standardized
+      ORDER BY avg_stipend_monthly DESC NULLS LAST
+    version: "1.0"
+    owner: "Naman"
+    tags: [compensation, internship]
+
+  - name: top_paying_companies
+    label: "Top 20 Companies by Average CTC"
+    description: "Companies with highest mean CTC, filtered to those with at least 2 known-CTC offers."
+    sql: |
+      SELECT
+          company_name,
+          COUNT(*)                                    AS offer_count,
+          ROUND(AVG(ctc_lpa_normalized), 2)           AS avg_ctc_lpa,
+          ROUND(MAX(ctc_lpa_normalized), 2)           AS max_ctc_lpa
+      FROM fact_offers
+      WHERE ctc_status IN ('KNOWN', 'RANGE')
+      GROUP BY company_name
+      HAVING COUNT(*) >= 2
+      ORDER BY avg_ctc_lpa DESC
+      LIMIT 20
+    version: "1.0"
+    owner: "Naman"
+    tags: [compensation, company]
+
+  - name: ctc_over_time
+    label: "Average CTC Trend by Notice Date"
+    description: "Monthly trend of average CTC, to see if compensation is rising over the dataset period."
+    sql: |
+      SELECT
+          STRFTIME(notice_date, '%Y-%m')              AS month,
+          COUNT(*)                                    AS offer_count,
+          ROUND(AVG(ctc_lpa_normalized), 2)           AS avg_ctc_lpa
+      FROM fact_offers
+      WHERE ctc_status IN ('KNOWN', 'RANGE')
+        AND notice_date IS NOT NULL
+      GROUP BY STRFTIME(notice_date, '%Y-%m')
+      ORDER BY month
+    version: "1.0"
+    owner: "Naman"
+    tags: [compensation, trend]

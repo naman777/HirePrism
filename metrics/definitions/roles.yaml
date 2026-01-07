@@ -1,0 +1,103 @@
+metrics:
+
+  - name: role_family_distribution
+    label: "Offer Count by Job Family"
+    description: "Number of offers per job family, all offer types included."
+    sql: |
+      SELECT
+          job_family,
+          COUNT(*)                                    AS offer_count,
+          ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1)
+                                                      AS pct_of_total
+      FROM fact_offers
+      GROUP BY job_family
+      ORDER BY offer_count DESC
+    version: "1.0"
+    owner: "Naman"
+    tags: [roles]
+
+  - name: top_roles_by_frequency
+    label: "Top 20 Raw Roles by Frequency"
+    description: "Most frequently appearing raw jobRole strings across all offers."
+    sql: |
+      SELECT
+          job_role_raw,
+          role_standardized,
+          job_family,
+          COUNT(*)                                    AS offer_count
+      FROM fact_offers
+      WHERE job_role_raw IS NOT NULL
+        AND job_role_raw NOT IN ('', 'Not Known', 'Not Declared', '-')
+      GROUP BY job_role_raw, role_standardized, job_family
+      ORDER BY offer_count DESC
+      LIMIT 20
+    version: "1.0"
+    owner: "Naman"
+    tags: [roles]
+
+  - name: avg_ctc_by_role_family
+    label: "Average CTC by Role Family"
+    description: "Mean CTC per job family for offers where CTC is known, with variance metrics."
+    sql: |
+      SELECT * FROM vw_role_summary
+    version: "1.0"
+    owner: "Naman"
+    tags: [roles, compensation]
+
+  - name: role_ctc_variance
+    label: "CTC Variance by Job Family"
+    description: "Coefficient of variation (stddev/mean) shows which role families have the most pay dispersion."
+    sql: |
+      SELECT
+          job_family,
+          COUNT(*)                                            AS offer_count,
+          ROUND(AVG(ctc_lpa_normalized), 2)                  AS avg_ctc_lpa,
+          ROUND(STDDEV(ctc_lpa_normalized), 2)               AS stddev_ctc_lpa,
+          ROUND(STDDEV(ctc_lpa_normalized) / NULLIF(AVG(ctc_lpa_normalized), 0), 3)
+                                                             AS coeff_of_variation
+      FROM fact_offers
+      WHERE ctc_status IN ('KNOWN', 'RANGE')
+      GROUP BY job_family
+      HAVING COUNT(*) >= 5
+      ORDER BY coeff_of_variation DESC NULLS LAST
+    version: "1.0"
+    owner: "Naman"
+    tags: [roles, compensation]
+
+  - name: no_cgpa_by_role_family
+    label: "No-CGPA Offer Rate by Role Family"
+    description: "Job families where the most offers have no CGPA requirement."
+    sql: |
+      SELECT
+          job_family,
+          COUNT(*)                                    AS total_offers,
+          COUNT(CASE WHEN no_cgpa_criteria = TRUE THEN 1 END)
+                                                      AS no_cgpa_count,
+          ROUND(
+              COUNT(CASE WHEN no_cgpa_criteria = TRUE THEN 1 END) * 100.0
+              / COUNT(*), 1
+          )                                           AS no_cgpa_pct
+      FROM fact_offers
+      GROUP BY job_family
+      ORDER BY no_cgpa_pct DESC
+    version: "1.0"
+    owner: "Naman"
+    tags: [roles, eligibility]
+
+  - name: offer_type_by_role_family
+    label: "Offer Type Mix by Role Family"
+    description: "For each job family, how many offers are FTE vs intern vs intern-to-FTE."
+    sql: |
+      SELECT
+          job_family,
+          offer_type_standardized,
+          COUNT(*)                                    AS offer_count,
+          ROUND(COUNT(*) * 100.0
+              / SUM(COUNT(*)) OVER (PARTITION BY job_family), 1)
+                                                      AS pct_within_family
+      FROM fact_offers
+      GROUP BY job_family, offer_type_standardized
+      ORDER BY job_family, offer_count DESC
+    version: "1.0"
+    owner: "Naman"
+    tags: [roles, internship]

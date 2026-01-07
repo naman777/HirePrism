@@ -1,0 +1,115 @@
+metrics:
+
+  - name: no_cgpa_offer_rate
+    label: "No-CGPA Offer Rate"
+    description: "Percentage of all offers that explicitly state no CGPA requirement."
+    sql: |
+      SELECT
+          COUNT(CASE WHEN no_cgpa_criteria = TRUE THEN 1 END)
+                                                      AS no_cgpa_count,
+          COUNT(*)                                    AS total_offers,
+          ROUND(
+              COUNT(CASE WHEN no_cgpa_criteria = TRUE THEN 1 END) * 100.0
+              / COUNT(*), 1
+          )                                           AS no_cgpa_pct
+      FROM fact_offers
+    version: "1.0"
+    owner: "Naman"
+    tags: [eligibility, kpi]
+
+  - name: cgpa_threshold_distribution
+    label: "CGPA Threshold Distribution"
+    description: "Frequency of each numeric CGPA threshold across offers that specify one."
+    sql: |
+      SELECT
+          eligibility_cgpa_num                        AS cgpa_threshold,
+          COUNT(*)                                    AS offer_count,
+          ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1)
+                                                      AS pct_of_known
+      FROM fact_offers
+      WHERE eligibility_status = 'KNOWN'
+        AND eligibility_cgpa_num IS NOT NULL
+      GROUP BY eligibility_cgpa_num
+      ORDER BY eligibility_cgpa_num
+    version: "1.0"
+    owner: "Naman"
+    tags: [eligibility]
+
+  - name: eligibility_status_breakdown
+    label: "Eligibility Status Breakdown"
+    description: "Distribution of eligibility parsing outcomes across all offers."
+    sql: |
+      SELECT
+          eligibility_status,
+          COUNT(*)                                    AS offer_count,
+          ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1)
+                                                      AS pct_of_total
+      FROM fact_offers
+      GROUP BY eligibility_status
+      ORDER BY offer_count DESC
+    version: "1.0"
+    owner: "Naman"
+    tags: [eligibility, quality]
+
+  - name: no_cgpa_by_company
+    label: "Companies with Most No-CGPA Offers"
+    description: "Top companies offering the most positions without a CGPA filter."
+    sql: |
+      SELECT
+          company_name,
+          COUNT(*)                                    AS total_offers,
+          COUNT(CASE WHEN no_cgpa_criteria = TRUE THEN 1 END)
+                                                      AS no_cgpa_count,
+          ROUND(AVG(CASE WHEN ctc_status IN ('KNOWN', 'RANGE')
+                    THEN ctc_lpa_normalized END), 2)  AS avg_ctc_lpa
+      FROM fact_offers
+      GROUP BY company_name
+      HAVING COUNT(CASE WHEN no_cgpa_criteria = TRUE THEN 1 END) > 0
+      ORDER BY no_cgpa_count DESC, avg_ctc_lpa DESC NULLS LAST
+      LIMIT 20
+    version: "1.0"
+    owner: "Naman"
+    tags: [eligibility, company]
+
+  - name: high_package_no_cgpa
+    label: "High-Package Offers with No CGPA Requirement"
+    description: "Offers >= 10 LPA that require no CGPA — the most accessible high-value opportunities."
+    sql: |
+      SELECT
+          company_name,
+          job_role_raw,
+          role_standardized,
+          job_family,
+          offer_type_standardized,
+          ctc_lpa_normalized,
+          ctc_status,
+          notice_date_raw,
+          location_extracted,
+          work_mode_extracted
+      FROM fact_offers
+      WHERE no_cgpa_criteria = TRUE
+        AND ctc_status IN ('KNOWN', 'RANGE')
+        AND ctc_lpa_normalized >= 10.0
+      ORDER BY ctc_lpa_normalized DESC
+    version: "1.0"
+    owner: "Naman"
+    tags: [eligibility, compensation]
+
+  - name: avg_cgpa_by_job_family
+    label: "Average CGPA Threshold by Job Family"
+    description: "Mean CGPA cutoff per job family — shows which roles are academically selective."
+    sql: |
+      SELECT
+          job_family,
+          COUNT(CASE WHEN eligibility_status = 'KNOWN' THEN 1 END)
+                                                      AS known_cgpa_count,
+          ROUND(AVG(CASE WHEN eligibility_status = 'KNOWN'
+                    THEN eligibility_cgpa_num END), 2) AS avg_cgpa_threshold,
+          COUNT(CASE WHEN no_cgpa_criteria = TRUE THEN 1 END)
+                                                      AS no_cgpa_count
+      FROM fact_offers
+      GROUP BY job_family
+      ORDER BY avg_cgpa_threshold DESC NULLS LAST
+    version: "1.0"
+    owner: "Naman"
+    tags: [eligibility, roles]
