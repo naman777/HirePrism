@@ -25,6 +25,9 @@ db:
 metrics:
 	$(PROFILE_PYTHON) -m src.metrics.executor
 
+anomalies:
+	$(PROFILE_PYTHON) -m src.anomaly.build_anomalies
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete

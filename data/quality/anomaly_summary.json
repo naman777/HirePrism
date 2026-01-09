@@ -1,0 +1,15 @@
+{
+  "total_flags": 100,
+  "flagged_offers": 97,
+  "by_type": {
+    "RARE_ROLE": 54,
+    "IMPLAUSIBLE_STUDENT_COUNT": 28,
+    "CTC_OUTLIER": 17,
+    "STIPEND_EXCEEDS_CTC": 1
+  },
+  "by_severity": {
+    "LOW": 54,
+    "MEDIUM": 41,
+    "HIGH": 5
+  }
+}
