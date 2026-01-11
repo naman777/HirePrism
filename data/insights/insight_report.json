@@ -1,0 +1,181 @@
+[
+  {
+    "insight_id": "INS_001",
+    "title": "CTC drops 74.0% from peak to trough across the placement season",
+    "finding": "Offers posted in 2025-07 averaged 26.16 LPA \u2014 the highest in the dataset. By 2026-04, the average had fallen to 6.81 LPA, a 74.0% decline. Early-season offers are dominated by premium tech and product companies; late-season offers skew toward manufacturing and core engineering roles with lower average compensation.",
+    "supporting_metric": "ctc_over_time",
+    "confidence": "HIGH",
+    "data_caveat": "Based on 541 offers with parseable CTC. Month with fewest offers (1) may be noisy.",
+    "numbers": {
+      "peak_month": "2025-07",
+      "peak_avg_ctc_lpa": 26.16,
+      "trough_month": "2026-04",
+      "trough_avg_ctc_lpa": 6.81,
+      "decline_pct": 74.0
+    }
+  },
+  {
+    "insight_id": "INS_002",
+    "title": "PPO offers pay 2.38\u00d7 more than standard FTE offers on average",
+    "finding": "Pre-placement offers (PPOs) average 22.93 LPA \u2014 2.38\u00d7 the 9.63 LPA average for direct FTE offers. This gap reflects both selection bias (PPOs go to top interns) and the company's incentive to retain proven performers. For students who receive a PPO, the financial upside versus a fresh FTE offer is substantial.",
+    "supporting_metric": "stipend_by_offer_type",
+    "confidence": "HIGH",
+    "data_caveat": "PPO sample: 25 offers. FTE sample: 162 offers. PPO CTC may be skewed by a small number of high-paying outliers.",
+    "numbers": {
+      "ppo_avg_ctc_lpa": 22.93,
+      "fte_avg_ctc_lpa": 9.63,
+      "intern_fte_avg_ctc_lpa": 12.75,
+      "premium_multiple": 2.38
+    }
+  },
+  {
+    "insight_id": "INS_003",
+    "title": "Companies that recruit more students do not pay higher CTC (r \u2248 0)",
+    "finding": "Across 328 companies with parseable CTC, the Pearson correlation between number of offers posted and average CTC is 0.01 \u2014 effectively zero. This means high-volume recruiters are not systematically higher or lower paying. The data shows mass-hiring companies like manufacturing conglomerates co-exist in the same offer-count range as boutique tech firms paying 3\u20134\u00d7 more.",
+    "supporting_metric": "top_paying_companies",
+    "confidence": "HIGH",
+    "data_caveat": "Correlation is computed at company level, not offer level.",
+    "numbers": {
+      "pearson_r": 0.01,
+      "companies_analyzed": 328,
+      "max_offers_single_company": 12
+    }
+  },
+  {
+    "insight_id": "INS_004",
+    "title": "CIVIL branches have a 1.14\u00d7 FTE-to-intern ratio \u2014 5.2\u00d7 higher than BIO",
+    "finding": "Civil engineering branches achieve a 1.14 FTE-to-intern ratio \u2014 for every intern role, there is more than one direct FTE opportunity. By contrast, CS (0.23) and ECE (0.28) branches are heavily skewed toward internships, reflecting the tech industry's preference for trial-before-hire. Students in core engineering streams face fewer intern-to-FTE conversion uncertainties.",
+    "supporting_metric": "fte_vs_intern_by_branch",
+    "confidence": "MEDIUM",
+    "data_caveat": "Branch coverage is 99.2% \u2014 6 offers have no branch data. Civil total offers (30) is much smaller than CS (1200), so the ratio may be noisier.",
+    "numbers": {
+      "CIVIL": 1.14,
+      "CHEM": 0.83,
+      "PG": 0.6,
+      "MECH": 0.44,
+      "ECE": 0.28,
+      "CS": 0.23,
+      "BIO": 0.22
+    }
+  },
+  {
+    "insight_id": "INS_005",
+    "title": "Academic roles waive CGPA requirements 2.5\u00d7 more often than Software Engineering",
+    "finding": "Academic offers have the highest no-CGPA rate among role families with 5+ offers: 66.7% of their 6 offers require no CGPA filter. Software Engineering, the largest family, waives CGPA in 26.8% of cases. This pattern suggests data-focused companies place more weight on skills and projects than academic scores \u2014 consistent with how data roles are typically hired in the industry.",
+    "supporting_metric": "no_cgpa_by_role_family",
+    "confidence": "MEDIUM",
+    "data_caveat": "CGPA status was parseable for 653 offers. 'No CGPA criteria' is self-reported by the company \u2014 actual screening during interviews may differ.",
+    "numbers": {
+      "top_family": "Academic",
+      "top_no_cgpa_pct": 66.7,
+      "swe_no_cgpa_pct": 26.8
+    }
+  },
+  {
+    "insight_id": "INS_006",
+    "title": "Software Engineering has the highest CTC variance \u2014 offers range from 3.6 to 123.0 LPA",
+    "finding": "With a coefficient of variation of 0.911 and a range from 3.6 to 123.0 LPA, Software Engineering has the widest compensation spread of any job family. The average is 13.4 LPA but this masks a bimodal distribution: product/tech companies offering 20\u201340+ LPA coexist with service companies offering 3.5\u20136 LPA. By contrast, Research roles show a CV of 0.128 \u2014 a much tighter, more predictable band.",
+    "supporting_metric": "role_ctc_variance",
+    "confidence": "HIGH",
+    "data_caveat": "CV is sensitive to outliers. The 123.0 LPA maximum in Software Engineering was validated by the anomaly detector as a flagged CTC outlier (>2.5\u03c3 from family mean).",
+    "numbers": {
+      "Software Engineering": {
+        "cv": 0.911,
+        "avg_ctc": 13.4
+      },
+      "Other": {
+        "cv": 0.841,
+        "avg_ctc": 12.71
+      },
+      "Engineering Trainee": {
+        "cv": 0.648,
+        "avg_ctc": 10.19
+      },
+      "Data / Analytics": {
+        "cv": 0.496,
+        "avg_ctc": 10.32
+      },
+      "Data Engineering": {
+        "cv": 0.423,
+        "avg_ctc": 10.99
+      },
+      "Business Analysis": {
+        "cv": 0.384,
+        "avg_ctc": 10.14
+      },
+      "Core Engineering": {
+        "cv": 0.364,
+        "avg_ctc": 11.41
+      },
+      "Academic": {
+        "cv": 0.243,
+        "avg_ctc": 8.9
+      },
+      "Research": {
+        "cv": 0.128,
+        "avg_ctc": 6.7
+      }
+    }
+  },
+  {
+    "insight_id": "INS_007",
+    "title": "28.6% of all offers require no CGPA \u2014 and 27.3% of those are high-package",
+    "finding": "187 of 654 offers (28.6%) explicitly state no CGPA requirement. Of these open-access offers, 51 (27.3%) also pay 10 LPA or above. This means a student with a lower CGPA has access to 51 high-paying opportunities without any academic filter \u2014 making skill development and project work the primary differentiator.",
+    "supporting_metric": "no_cgpa_offer_rate",
+    "confidence": "HIGH",
+    "data_caveat": "No-CGPA status is extracted from the eligibilityCgpa field. Some companies may screen informally during interviews even when the field says 'No CGPA Criteria'.",
+    "numbers": {
+      "total_offers": 654,
+      "no_cgpa_count": 187,
+      "no_cgpa_pct": 28.6,
+      "high_package_no_cgpa": 51,
+      "high_package_no_cgpa_pct": 27.3
+    }
+  },
+  {
+    "insight_id": "INS_008",
+    "title": "Meesho averages 46.83 LPA for intern-to-FTE roles \u2014 3.7\u00d7 the sector average of 12.75 LPA",
+    "finding": "Among companies with 2+ intern-FTE offers, Meesho stands out with an average of 46.83 LPA \u2014 3.7\u00d7 the sector average of 12.75 LPA for this offer type. The next highest is Zhealthehr at 28.33 LPA. Intern-to-FTE pathways represent 99 offers (15.1% of the dataset) and on average pay 1.32\u00d7 more than pure FTE offers \u2014 confirming the 'intern-first' pathway as financially superior for top performers.",
+    "supporting_metric": "stipend_by_offer_type",
+    "confidence": "MEDIUM",
+    "data_caveat": "Meesho sample: 3 INTERN_FTE offers. Small sample sizes amplify averages; treat as directional.",
+    "numbers": {
+      "sector_avg_ctc_lpa": 12.75,
+      "top_company": "Meesho",
+      "top_avg_ctc_lpa": 46.83,
+      "multiple_vs_sector": 3.7,
+      "top_5": [
+        {
+          "company_name": "Meesho",
+          "n": 3,
+          "avg_ctc": 46.83,
+          "max_ctc": 60.0
+        },
+        {
+          "company_name": "Zhealthehr",
+          "n": 3,
+          "avg_ctc": 28.33,
+          "max_ctc": 35.0
+        },
+        {
+          "company_name": "American Express",
+          "n": 3,
+          "avg_ctc": 21.94,
+          "max_ctc": 21.94
+        },
+        {
+          "company_name": "ION Group",
+          "n": 3,
+          "avg_ctc": 17.3,
+          "max_ctc": 17.3
+        },
+        {
+          "company_name": "Addverb Technologies",
+          "n": 6,
+          "avg_ctc": 16.0,
+          "max_ctc": 16.0
+        }
+      ]
+    }
+  }
+]
