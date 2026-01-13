@@ -31,6 +31,9 @@ anomalies:
 insights:
 	$(PROFILE_PYTHON) -m src.insights.build_insights
 
+agent:
+	$(PROFILE_PYTHON) -c "from src.agent.graph import run; r=run('What is the average CTC for Software Engineering roles?'); print(r.answer)"
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
