@@ -187,3 +187,35 @@ def test_run_by_tag_kpi(executor: MetricExecutor) -> None:
     for name, df in results.items():
         assert isinstance(df, pd.DataFrame)
         assert len(df) > 0
+
+
+def test_run_definition_returns_dataframe(executor: MetricExecutor) -> None:
+    metric = executor.registry.get("high_package_rate")
+    df = executor.run_definition(metric)
+    assert isinstance(df, pd.DataFrame)
+    assert len(df) > 0
+
+
+def test_run_all_handles_bad_sql(registry: MetricRegistry) -> None:
+    from src.metrics.loader import MetricDefinition
+
+    bad = MetricDefinition(
+        name="bad_metric",
+        label="Bad",
+        description="intentionally broken",
+        sql="SELECT * FROM nonexistent_table_xyz",
+        version="1.0",
+        owner="test",
+        tags=["test"],
+        category="test",
+    )
+    from src.metrics.loader import MetricRegistry as MR
+    combined = MR()
+    for m in registry.all():
+        combined._metrics[m.name] = m
+    combined._metrics["bad_metric"] = bad
+
+    ex = MetricExecutor(registry=combined)
+    results = ex.run_all()
+    assert "bad_metric" in results
+    assert results["bad_metric"].empty

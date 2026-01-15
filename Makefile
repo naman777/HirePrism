@@ -34,6 +34,9 @@ insights:
 agent:
 	$(PROFILE_PYTHON) -c "from src.agent.graph import run; r=run('What is the average CTC for Software Engineering roles?'); print(r.answer)"
 
+app:
+	$(STREAMLIT) run src/app/main.py
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete

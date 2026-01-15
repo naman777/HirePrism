@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import json
+import tempfile
+from pathlib import Path
 
+import pandas as pd
 import pytest
 
-from src.ingestion.flatten_offers import _make_offer_id, flatten_offers
+from src.ingestion.flatten_offers import _make_offer_id, flatten_offers, save_parquet
 from src.ingestion.load_json import RAW_PATH, load_placements
 
 
@@ -195,3 +198,18 @@ def test_parent_spillover_is_inherited() -> None:
     assert df.iloc[0]["branches_from_parent"] == True  # noqa: E712
     assert df.iloc[0]["eligibility_cgpa_raw"] == "7.5"
     assert df.iloc[0]["cgpa_from_parent"] == True  # noqa: E712
+
+
+# ---------------------------------------------------------------------------
+# save_parquet
+# ---------------------------------------------------------------------------
+
+
+def test_save_parquet_writes_file(flat_df) -> None:
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out = Path(tmpdir) / "sub" / "out.parquet"
+        save_parquet(flat_df, out)
+        assert out.exists()
+        loaded = pd.read_parquet(out)
+        assert len(loaded) == len(flat_df)
+        assert list(loaded.columns) == list(flat_df.columns)
