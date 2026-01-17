@@ -220,3 +220,4 @@ htmlcov/
 data/processed/*.duckdb
 data/processed/*.parquet
 .streamlit/
+.claude/
