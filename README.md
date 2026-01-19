@@ -1,4 +1,4 @@
-# Placelytics
+# HirePrism
 
 An end-to-end placement analytics platform built over 654 real campus placement offers from 461 companies. Parses messy, denormalized JSON into a queryable analytical model, surfaces 8 data-backed insights, and exposes a multi-step agentic NL query layer.
 
