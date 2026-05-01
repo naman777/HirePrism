@@ -5,7 +5,7 @@ from pathlib import Path
 
 import duckdb
 
-DB_PATH = Path("data/processed/placelytics.duckdb")
+DB_PATH = Path("data/processed/HirePrism.duckdb")
 FACT_PATH = Path("data/processed/fact_offers_clean.parquet")
 BRIDGE_PATH = Path("data/processed/bridge_offer_branches.parquet")
 VIEWS_DIR = Path("sql/views")

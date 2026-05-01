@@ -3,7 +3,7 @@ from __future__ import annotations
 # ── Schema context ─────────────────────────────────────────────────────────────
 
 SCHEMA_CONTEXT = """
-## Database: Placelytics — 654 campus placement offers from a single institution
+## Database: HirePrism — 654 campus placement offers from a single institution
 
 ### fact_offers  (654 rows — one per offer)
 Key columns:

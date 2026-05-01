@@ -1,4 +1,4 @@
-# Placelytics — Complete Deep Dive & Interview Guide
+# HirePrism — Complete Deep Dive & Interview Guide
 
 This document covers the full system design, every tech decision with alternatives, and comprehensive interview Q&A across all layers of the project.
 
@@ -6,7 +6,7 @@ This document covers the full system design, every tech decision with alternativ
 
 ## 1. What Is This Project, In One Paragraph
 
-Placelytics is a placement analytics platform built over 654 real campus placement offers from 461 companies. The raw data is a single messy JSON file from a Firestore database — nested, inconsistently formatted, with CTC values in 6+ different formats and branch lists stored at the wrong schema level. The project flattens and cleans this data through an explicit pipeline, loads it into a DuckDB analytical model, defines 24 named business metrics in YAML, runs 5 statistical anomaly detectors, generates 8 data-backed insight cards, and surfaces everything through an 8-page Streamlit app with a LangGraph-powered multi-step natural language query layer.
+HirePrism is a placement analytics platform built over 654 real campus placement offers from 461 companies. The raw data is a single messy JSON file from a Firestore database — nested, inconsistently formatted, with CTC values in 6+ different formats and branch lists stored at the wrong schema level. The project flattens and cleans this data through an explicit pipeline, loads it into a DuckDB analytical model, defines 24 named business metrics in YAML, runs 5 statistical anomaly detectors, generates 8 data-backed insight cards, and surfaces everything through an 8-page Streamlit app with a LangGraph-powered multi-step natural language query layer.
 
 ---
 
@@ -196,7 +196,7 @@ Each offer has a `branchesAllowed` field that is a list — typically 3–15 bra
 
 **Q: Describe the project in 60 seconds.**
 
-Placelytics is an end-to-end placement analytics platform. I took a real JSON dump from a campus placement system — 461 companies, 654 offers, messy and inconsistently formatted — and built a full data pipeline on top of it. The pipeline flattens nested JSON, parses 6 variants of CTC format, normalizes 118 raw role names into 11 job families, and runs a quality scoring system on every run. The cleaned data lives in a DuckDB analytical model with 24 named metrics in YAML. On top of that I built 5 statistical anomaly detectors, 8 real insight findings, a LangGraph multi-step NL query agent, and an 8-page Streamlit dashboard. 305 tests, 93% coverage.
+HirePrism is an end-to-end placement analytics platform. I took a real JSON dump from a campus placement system — 461 companies, 654 offers, messy and inconsistently formatted — and built a full data pipeline on top of it. The pipeline flattens nested JSON, parses 6 variants of CTC format, normalizes 118 raw role names into 11 job families, and runs a quality scoring system on every run. The cleaned data lives in a DuckDB analytical model with 24 named metrics in YAML. On top of that I built 5 statistical anomaly detectors, 8 real insight findings, a LangGraph multi-step NL query agent, and an 8-page Streamlit dashboard. 305 tests, 93% coverage.
 
 ---
 
@@ -455,7 +455,7 @@ Create `src/app/pages/08_NewPage.py`. Streamlit discovers pages alphabetically f
 
 **Q: How is the code organized for testability?**
 
-Every module that does significant work has a pure functional core. `parse_ctc(raw_string) → dict` — no database, no filesystem, no side effects. `normalize_role(raw_string) → dict` — same. This makes unit testing trivial: provide input, assert output, no setup or teardown. The quality scorer takes a DataFrame and returns a dict — the test constructs a minimal DataFrame inline. The only tests that require a real database are the metrics executor tests, and those use the actual `data/processed/placelytics.duckdb` file (not a mock).
+Every module that does significant work has a pure functional core. `parse_ctc(raw_string) → dict` — no database, no filesystem, no side effects. `normalize_role(raw_string) → dict` — same. This makes unit testing trivial: provide input, assert output, no setup or teardown. The quality scorer takes a DataFrame and returns a dict — the test constructs a minimal DataFrame inline. The only tests that require a real database are the metrics executor tests, and those use the actual `data/processed/HirePrism.duckdb` file (not a mock).
 
 ---
 

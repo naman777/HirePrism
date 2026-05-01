@@ -5,7 +5,7 @@ from pathlib import Path
 import plotly.express as px
 import streamlit as st
 
-st.set_page_config(page_title="Quality · Placelytics", page_icon="🔍", layout="wide")
+st.set_page_config(page_title="Quality · HirePrism", page_icon="🔍", layout="wide")
 
 from src.app.components import db_path_ok, page_header, qdb
 

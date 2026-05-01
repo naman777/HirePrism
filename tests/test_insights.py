@@ -120,7 +120,7 @@ def test_render_report_markdown_contains_all_ids(all_cards: list[InsightCard]) -
 
 def test_render_report_has_header(all_cards: list[InsightCard]) -> None:
     md = render_report_markdown(all_cards)
-    assert "# Placelytics" in md
+    assert "# HirePrism" in md
     assert "Insight Report" in md
 
 

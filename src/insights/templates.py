@@ -22,7 +22,7 @@ _MD_CARD = """\
 """
 
 _MD_REPORT = """\
-# Placelytics — Insight Report
+# HirePrism — Insight Report
 
 *Generated from {{ total }} analysed placement offers.*
 

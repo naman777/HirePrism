@@ -1,4 +1,4 @@
-# Placelytics — Complete System Design
+# HirePrism — Complete System Design
 
 ---
 
@@ -6,7 +6,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           PLACELYTICS SYSTEM                                │
+│                           HirePrism SYSTEM                                │
 │                                                                             │
 │  ┌──────────────┐    ┌─────────────────────┐    ┌─────────────────────┐    │
 │  │   RAW DATA   │    │   PIPELINE LAYER    │    │  ANALYTICAL MODEL   │    │
@@ -69,7 +69,7 @@ DUCKDB MODEL   →  METRICS LAYER  →  ANOMALY       →  INSIGHTS
 build_tables       loader.py         detector.py      generator.py
 build_views        executor.py       explainer.py     templates.py
 
-placelytics        MetricRegistry    anomaly_flags    InsightCard × 8
+HirePrism        MetricRegistry    anomaly_flags    InsightCard × 8
 .duckdb            MetricExecutor    vw_anomalies     insight_report.json
 5 tables                                              insight_report.md
 7 views            24 metrics
@@ -157,7 +157,7 @@ bridge_offer_branches.parquet  (3,639 rows × 4 cols)
       │  → insight_report.json
       │  → insight_report.md
       ▼
-placelytics.duckdb
+HirePrism.duckdb
   (5 tables + 7 views + anomaly_flags + vw_anomalies)
 ```
 
@@ -860,7 +860,7 @@ class AgentResult:
                                   │                                         │
                     ┌─────────────▼─────────────┐                          │
                     │  src/modeling/            │                           │
-                    │    build_tables.py        │ ──── placelytics.duckdb ─►│
+                    │    build_tables.py        │ ──── HirePrism.duckdb ─►│
                     └─────────────┬─────────────┘                          │
                                   │                                         │
                ┌──────────────────┼──────────────────┐                     │

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import streamlit as st
 
-st.set_page_config(page_title="Insights · Placelytics", page_icon="💡", layout="wide")
+st.set_page_config(page_title="Insights · HirePrism", page_icon="💡", layout="wide")
 
 from src.app.components import page_header
 

@@ -5,7 +5,7 @@ import time
 import streamlit as st
 import plotly.express as px
 
-st.set_page_config(page_title="Query Console · Placelytics", page_icon="🔎", layout="wide")
+st.set_page_config(page_title="Query Console · HirePrism", page_icon="🔎", layout="wide")
 
 from src.app.components import db_path_ok, page_header, qdb
 

@@ -1,4 +1,4 @@
-# Placelytics — Insight Report
+# HirePrism — Insight Report
 
 *Generated from 654 analysed placement offers.*
 

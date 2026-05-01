@@ -1,4 +1,4 @@
-# Interview Prep — Placelytics
+# Interview Prep — HirePrism
 
 Q&A for explaining design decisions under technical interview pressure. Keep this updated as the project evolves.
 

@@ -9,7 +9,7 @@ import pytest
 from src.modeling.build_tables import build, connect
 
 # Real DB built from actual parquet data — used for integration assertions
-REAL_DB = Path("data/processed/placelytics.duckdb")
+REAL_DB = Path("data/processed/placelytics.duckdb") 
 
 EXPECTED_TABLES = [
     "fact_offers",

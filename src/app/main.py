@@ -12,7 +12,7 @@ load_dotenv()  # Load .env into os.environ before anything else
 import streamlit as st
 
 st.set_page_config(
-    page_title="Placelytics",
+    page_title="HirePrism",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -21,7 +21,7 @@ st.set_page_config(
 from src.app.components import db_path_ok, kpi_row, page_header, qdb
 
 page_header(
-    "Placelytics — Placement Intelligence Platform",
+    "HirePrism — Placement Intelligence Platform",
     "654 placement offers · 386 companies · academic year 2025–26",
 )
 
