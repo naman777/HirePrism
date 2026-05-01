@@ -217,7 +217,5 @@ __pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
-data/processed/*.duckdb
-data/processed/*.parquet
 .streamlit/
 .claude/
