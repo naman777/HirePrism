@@ -20,7 +20,7 @@ dependencies = [
   "rapidfuzz",
   "scipy",
   "matplotlib",
-  "anthropic",
+  "openai",
   "langgraph",
   "typing-extensions",
   "plotly"

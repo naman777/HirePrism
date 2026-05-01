@@ -78,10 +78,10 @@ with tab_sql:
 with tab_nl:
     st.subheader("Ask a Question in Plain English")
 
-    api_key_set = bool(os.environ.get("ANTHROPIC_API_KEY"))
+    api_key_set = bool(os.environ.get("OPENAI_API_KEY"))
     if not api_key_set:
         st.warning(
-            "**ANTHROPIC_API_KEY not set.** Add it to your `.env` file and restart the app "
+            "**OPENAI_API_KEY not set.** Add it to your `.env` file and restart the app "
             "to enable the NL agent.",
             icon="⚠️",
         )

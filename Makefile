@@ -35,14 +35,14 @@ agent:
 	$(PROFILE_PYTHON) -c "from src.agent.graph import run; r=run('What is the average CTC for Software Engineering roles?'); print(r.answer)"
 
 app:
-	$(STREAMLIT) run src/app/main.py
+	$(PROFILE_PYTHON) -m streamlit run src/app/main.py
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 
 app:
-	$(STREAMLIT) run src/app/main.py
+	$(PROFILE_PYTHON) -m streamlit run src/app/main.py
 
 test:
 	$(PYTEST) --cov=src

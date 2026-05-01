@@ -266,7 +266,7 @@ def test_run_returns_agent_result(mock_client_fn) -> None:
 
 @patch("src.agent.nodes._client")
 def test_run_returns_error_result_on_exception(mock_client_fn) -> None:
-    mock_client_fn.side_effect = EnvironmentError("ANTHROPIC_API_KEY is not set.")
+    mock_client_fn.side_effect = EnvironmentError("OPENAI_API_KEY is not set.")
 
     from src.agent.graph import run
 
@@ -279,8 +279,8 @@ def test_run_returns_error_result_on_exception(mock_client_fn) -> None:
 
 
 @pytest.mark.skipif(
-    not os.environ.get("ANTHROPIC_API_KEY"),
-    reason="ANTHROPIC_API_KEY not set — skipping live agent test",
+    not os.environ.get("OPENAI_API_KEY"),
+    reason="OPENAI_API_KEY not set — skipping live agent test",
 )
 def test_run_live_simple_question() -> None:
     from src.agent.graph import run

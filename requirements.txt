@@ -1,0 +1,15 @@
+pandas
+duckdb
+pyarrow
+streamlit
+pydantic
+pyyaml
+jinja2
+python-dotenv
+rapidfuzz
+scipy
+matplotlib
+openai
+langgraph
+typing-extensions
+plotly

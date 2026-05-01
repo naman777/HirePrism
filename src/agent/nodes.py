@@ -5,7 +5,7 @@ import logging
 import os
 from typing import Any
 
-import anthropic
+from openai import OpenAI
 
 from src.agent.prompts import (
     PLANNER_SYSTEM,
@@ -17,26 +17,28 @@ from src.agent.tools import execute_sql
 
 log = logging.getLogger(__name__)
 
-MODEL = "claude-sonnet-4-6"
+MODEL = "gpt-4o-mini"
 MAX_SUB_QUESTIONS = 3
 
 
-def _client() -> anthropic.Anthropic:
-    key = os.environ.get("ANTHROPIC_API_KEY", "")
+def _client() -> OpenAI:
+    key = os.environ.get("OPENAI_API_KEY", "")
     if not key:
-        raise EnvironmentError("ANTHROPIC_API_KEY is not set.")
-    return anthropic.Anthropic(api_key=key)
+        raise EnvironmentError("OPENAI_API_KEY is not set.")
+    return OpenAI(api_key=key)
 
 
 def _chat(system: str, user: str, max_tokens: int = 512) -> str:
-    """Single Claude turn, returns the assistant text."""
-    response = _client().messages.create(
+    """Single OpenAI turn, returns the assistant text."""
+    response = _client().chat.completions.create(
         model=MODEL,
         max_tokens=max_tokens,
-        system=system,
-        messages=[{"role": "user", "content": user}],
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
     )
-    return response.content[0].text.strip()
+    return response.choices[0].message.content.strip()
 
 
 # ── Node functions ─────────────────────────────────────────────────────────────
@@ -115,7 +117,7 @@ def synthesizer_node(state: dict[str, Any]) -> dict[str, Any]:
     sub_questions = state.get("sub_questions", [])
     results = state.get("results", [])
 
-    # Build context block for Claude
+    # Build context block for the LLM
     context_parts = []
     for sq, result in zip(sub_questions, results):
         context_parts.append(f"Sub-question: {sq}")

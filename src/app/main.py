@@ -2,6 +2,9 @@
 import json
 from pathlib import Path
 
+from dotenv import load_dotenv
+load_dotenv()  # Load .env into os.environ before anything else
+
 import streamlit as st
 
 st.set_page_config(

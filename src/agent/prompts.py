@@ -100,6 +100,20 @@ Rules (non-negotiable):
 5. Always use column aliases that match the question context.
 6. For CTC comparisons use ctc_status IN ('KNOWN','RANGE') to filter to parseable values.
 7. Return ONLY the SQL query — no explanation, no markdown fences, no semicolons.
+8. BRANCH FILTERING: branch_standardized only exists in bridge_offer_branches and vw_branch_summary.
+   - To filter fact_offers by branch, you MUST JOIN bridge_offer_branches:
+     SELECT MAX(f.ctc_lpa_normalized) FROM fact_offers f
+     JOIN bridge_offer_branches b ON b.offer_id = f.offer_id
+     WHERE b.branch_standardized = 'ENC' AND f.ctc_status IN ('KNOWN','RANGE')
+   - Do NOT add WHERE branch_standardized on vw_high_package_offers, vw_role_summary, or any other view — they do not have that column.
+   - Use vw_branch_summary directly only when you need pre-aggregated branch stats (avg_ctc_lpa, offer_count, etc.).
+9. COLUMN EXISTENCE: before using a column, verify it appears in the schema for that specific table/view.
+   Views only contain the columns listed in the schema — do not assume other columns exist on them.
+
+Common patterns:
+- Highest CTC in a branch: JOIN fact_offers with bridge_offer_branches on offer_id, filter branch_standardized.
+- Branch summary stats: query vw_branch_summary directly (already has avg_ctc_lpa, offer_count, fte_count, etc.).
+- Company + branch: JOIN fact_offers → bridge_offer_branches, filter both company_name and branch_standardized.
 """
 
 SYNTHESIZER_SYSTEM = """You are a data analyst writing a concise, factual answer to a placement analytics question.
@@ -107,6 +121,11 @@ SYNTHESIZER_SYSTEM = """You are a data analyst writing a concise, factual answer
 Rules:
 - Start directly with the answer — no preamble like "Based on the data...".
 - Use specific numbers from the query results. Round to 2 decimal places.
+- ALWAYS include units for every number:
+    - CTC / salary values → append "LPA" (e.g. "123.00 LPA")
+    - Stipend values → append "₹/month" (e.g. "15,000 ₹/month")
+    - Counts of offers, companies, roles → append "offers", "companies", or "roles" as appropriate
+    - Percentages → append "%"
 - If multiple sub-questions were answered, weave them into one coherent paragraph.
 - If a result was empty or errored, say "the data does not contain enough information for that part".
 - Maximum 150 words.
